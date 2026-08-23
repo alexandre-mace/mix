@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Check, Link2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -35,7 +36,13 @@ const COULEURS: Record<string, string> = {
 const fr = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
 const fr1 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 
-function RythmeBadge({ filiere, capacite }: { filiere: Filiere; capacite: number }) {
+function RythmeBadge({
+  filiere,
+  capacite,
+}: {
+  filiere: Filiere;
+  capacite: number;
+}) {
   const rythme = rythmeRequis(filiere, capacite);
   if (!rythme) return null;
   if (filiere.id === "nucleaireExistant") {
@@ -59,7 +66,9 @@ function RythmeBadge({ filiere, capacite }: { filiere: Filiere; capacite: number
     if (capacite === 0 && filiere.actuel === 0) return null;
     return (
       <Badge variant="secondary">
-        {capacite < filiere.actuel ? "parc réduit, non renouvelé" : "déjà installé"}
+        {capacite < filiere.actuel
+          ? "parc réduit, non renouvelé"
+          : "déjà installé"}
       </Badge>
     );
   }
@@ -144,7 +153,13 @@ function FiliereCard({
         <p className="mt-2 text-pretty">{filiere.note}</p>
         <p className="mt-2">
           {filiere.sources.map((source, i) => (
-            <TextLink key={i} href={source.url} target="_blank" rel="noopener noreferrer" className="mr-3">
+            <TextLink
+              key={i}
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mr-3"
+            >
               {source.label}
             </TextLink>
           ))}
@@ -247,7 +262,11 @@ export function Simulator() {
           <p className="mt-3 text-sm text-pretty text-muted-foreground">
             {DEMANDE.presets.find((p) => p.valeur === demande)?.description ??
               "Trajectoire personnalisée entre sobriété et réindustrialisation."}{" "}
-            <TextLink href={DEMANDE.sources[0].url} target="_blank" rel="noopener noreferrer">
+            <TextLink
+              href={DEMANDE.sources[0].url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {DEMANDE.sources[0].label}
             </TextLink>
           </p>
@@ -356,7 +375,7 @@ export function Simulator() {
                   <span
                     className={cn(
                       "inline-block size-2 rounded-full",
-                      COULEURS[p.filiere.id]
+                      COULEURS[p.filiere.id],
                     )}
                   />
                   {p.filiere.nom} {fr.format(p.twh)}
@@ -366,12 +385,12 @@ export function Simulator() {
 
           {/* Verdict */}
           {deficitSignificatif ? (
-            <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4">
-              <p className="font-medium text-red-800">
-                Il manque {fr.format(resultat.deficitTwh)} TWh d&apos;électricité
-                bas-carbone.
-              </p>
-              <p className="mt-2 text-sm text-pretty text-red-700">
+            <Alert variant="destructive" className="mt-5">
+              <AlertTitle>
+                Il manque {fr.format(resultat.deficitTwh)} TWh
+                d&apos;électricité bas-carbone.
+              </AlertTitle>
+              <AlertDescription>
                 Ces usages ne disparaissent pas : ils restent aux énergies
                 fossiles. Comme 1 kWh d&apos;électricité en remplace environ{" "}
                 {FACTEUR_SUBSTITUTION_FOSSILE} d&apos;origine fossile (rendement
@@ -385,32 +404,33 @@ export function Simulator() {
                   {fr.format(resultat.emissionsMtCo2)} MtCO2 par an
                 </span>{" "}
                 (le transport routier français en émet ~120).
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           ) : resultat.surplusTwh > resultat.besoinTwh * 0.1 ? (
-            <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
-              <p className="font-medium text-amber-800">
+            <Alert variant="warning" className="mt-5">
+              <AlertTitle>
                 Surcapacité : {fr.format(resultat.surplusTwh)} TWh au-delà du
                 besoin.
-              </p>
-              <p className="mt-2 text-sm text-pretty text-amber-700">
+              </AlertTitle>
+              <AlertDescription>
                 Sans nouveaux débouchés (exports, électrolyse), une partie de
                 cette production serait écrêtée ou modulée : c&apos;est le
                 risque de « surcapacité durable » décrit par le Bilan
                 prévisionnel 2025.
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           ) : (
-            <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <p className="font-medium text-primary">
-                ✓ Le besoin est couvert{equilibre ? "" : ", avec de la marge"}.
-              </p>
-              <p className="mt-2 text-sm text-pretty text-muted-foreground">
+            <Alert variant="success" className="mt-5">
+              <AlertTitle>
+                ✓ Le besoin est couvert
+                {equilibre ? "" : ", avec de la marge"}.
+              </AlertTitle>
+              <AlertDescription>
                 La neutralité carbone suppose de tenir ce niveau de production :
                 chaque TWh bas-carbone produit en remplace environ{" "}
                 {FACTEUR_SUBSTITUTION_FOSSILE} d&apos;origine fossile.
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           )}
 
           {/* Part variable */}
@@ -446,7 +466,8 @@ export function Simulator() {
               </>
             ) : partage === "adresse" ? (
               <>
-                <Check data-icon="inline-start" /> Lien dans la barre d&apos;adresse
+                <Check data-icon="inline-start" /> Lien dans la barre
+                d&apos;adresse
               </>
             ) : (
               <>
