@@ -144,7 +144,10 @@ export function Simulator() {
 
   const resultat = simuler(capacites, demande);
   const couverture = resultat.totalTwh / resultat.besoinTwh;
-  const equilibre = couverture >= 1 && couverture <= 1.1;
+  // Le modèle annualisé n'est pas précis au TWh près : un écart inférieur à
+  // 1 % du besoin se lit comme un équilibre, pas comme un déficit.
+  const deficitSignificatif = resultat.deficitTwh > resultat.besoinTwh * 0.01;
+  const equilibre = couverture >= 0.99 && couverture <= 1.1;
   const scenario = SCENARIOS.find((s) => s.id === scenarioActif);
 
   const setCapacite = (id: string, valeur: number) => {
@@ -327,7 +330,7 @@ export function Simulator() {
           </div>
 
           {/* Verdict */}
-          {resultat.deficitTwh > 0 ? (
+          {deficitSignificatif ? (
             <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4">
               <p className="font-medium text-red-800">
                 Il manque {fr.format(resultat.deficitTwh)} TWh d&apos;électricité
