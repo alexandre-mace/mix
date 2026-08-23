@@ -34,13 +34,32 @@ const fr1 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 function RythmeBadge({ filiere, capacite }: { filiere: Filiere; capacite: number }) {
   const rythme = rythmeRequis(filiere, capacite);
   if (!rythme) return null;
-  if (rythme.statut === "acquis") {
-    return <Badge variant="secondary">déjà installé</Badge>;
+  if (filiere.id === "nucleaireExistant") {
+    // Pour le parc existant, l'enjeu est la prolongation, pas la construction.
+    if (rythme.statut === "horsBornes") {
+      return (
+        <Badge className="border-amber-200 bg-amber-50 text-amber-700">
+          pari : prolongations à 80 ans, avis ASNR attendu
+        </Badge>
+      );
+    }
+    return (
+      <Badge variant="secondary">
+        {capacite >= (filiere.seuilRouge ?? 0)
+          ? "trajectoire médiane RTE"
+          : "fermetures anticipées du parc"}
+      </Badge>
+    );
   }
-  const label =
-    filiere.id === "nucleaireExistant"
-      ? "prolongation"
-      : `${fr1.format(rythme.gwParAn)} GW/an`;
+  if (rythme.statut === "acquis") {
+    if (capacite === 0 && filiere.actuel === 0) return null;
+    return (
+      <Badge variant="secondary">
+        {capacite < filiere.actuel ? "parc réduit, non renouvelé" : "déjà installé"}
+      </Badge>
+    );
+  }
+  const label = `${fr1.format(rythme.gwParAn)} GW/an`;
   if (rythme.statut === "horsBornes") {
     return (
       <Badge className="border-red-200 bg-red-50 text-red-700">
