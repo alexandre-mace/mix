@@ -16,6 +16,7 @@ import {
   SCENARIOS,
   simuler,
 } from "@/lib/model";
+import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/utils";
 
 const COULEURS: Record<string, string> = {
@@ -140,15 +141,9 @@ function FiliereCard({
         <p className="mt-2 text-pretty">{filiere.note}</p>
         <p className="mt-2">
           {filiere.sources.map((source, i) => (
-            <a
-              key={i}
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mr-3 text-primary underline-offset-2 hover:underline"
-            >
+            <TextLink key={i} href={source.url} target="_blank" rel="noopener noreferrer" className="mr-3">
               {source.label}
-            </a>
+            </TextLink>
           ))}
         </p>
       </details>
@@ -226,14 +221,9 @@ export function Simulator() {
           <p className="mt-3 text-sm text-pretty text-muted-foreground">
             {DEMANDE.presets.find((p) => p.valeur === demande)?.description ??
               "Trajectoire personnalisée entre sobriété et réindustrialisation."}{" "}
-            <a
-              href={DEMANDE.sources[0].url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline-offset-2 hover:underline"
-            >
+            <TextLink href={DEMANDE.sources[0].url} target="_blank" rel="noopener noreferrer">
               {DEMANDE.sources[0].label}
-            </a>
+            </TextLink>
           </p>
         </section>
 

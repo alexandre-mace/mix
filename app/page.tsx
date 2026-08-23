@@ -2,6 +2,7 @@ import { Brand } from "@/components/brand";
 import { ClimateLabBadge } from "@/components/climatelab-badge";
 import { MadeWithLove } from "@/components/made-with-love";
 import { Simulator } from "@/components/Simulator";
+import { TextLink } from "@/components/ui/text-link";
 import { DOCS } from "@/lib/model";
 
 export default function Home() {
@@ -67,38 +68,18 @@ export default function Home() {
               retiennent 0,25 MtCO2 par TWh fossile.
             </p>
             <p className="flex flex-wrap gap-x-4 gap-y-1">
-              <a
-                className="text-primary underline-offset-2 hover:underline"
-                href={DOCS.consultation}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <TextLink href={DOCS.consultation} target="_blank" rel="noopener noreferrer">
                 Consultation FE2050 (avril 2026, PDF)
-              </a>
-              <a
-                className="text-primary underline-offset-2 hover:underline"
-                href={DOCS.synthese}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              </TextLink>
+              <TextLink href={DOCS.synthese} target="_blank" rel="noopener noreferrer">
                 Synthèse de la consultation (PDF)
-              </a>
-              <a
-                className="text-primary underline-offset-2 hover:underline"
-                href={DOCS.bp2025}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              </TextLink>
+              <TextLink href={DOCS.bp2025} target="_blank" rel="noopener noreferrer">
                 Bilan prévisionnel 2025 (PDF)
-              </a>
-              <a
-                className="text-primary underline-offset-2 hover:underline"
-                href={DOCS.fe2050}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              </TextLink>
+              <TextLink href={DOCS.fe2050} target="_blank" rel="noopener noreferrer">
                 Futurs énergétiques 2050 (RTE)
-              </a>
+              </TextLink>
             </p>
           </div>
         </section>
