@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Check, Link2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -8,7 +9,9 @@ import {
   ANNEES_RESTANTES,
   Capacites,
   capacitesInitiales,
+  decoderEtat,
   DEMANDE,
+  encoderEtat,
   FACTEUR_SUBSTITUTION_FOSSILE,
   Filiere,
   FILIERES,
@@ -155,6 +158,29 @@ export function Simulator() {
   const [demande, setDemande] = useState<number>(DEMANDE.defaut);
   const [capacites, setCapacites] = useState<Capacites>(capacitesInitiales);
   const [scenarioActif, setScenarioActif] = useState<string | null>(null);
+  const [partage, setPartage] = useState<"copie" | "adresse" | null>(null);
+
+  // Un mix partagé arrive par l'URL ; la page reste statique, on lit après montage.
+  useEffect(() => {
+    const etat = decoderEtat(window.location.search);
+    if (etat) {
+      setCapacites(etat.capacites);
+      setDemande(etat.demande);
+    }
+  }, []);
+
+  const partager = async () => {
+    const url = `${window.location.origin}${window.location.pathname}?${encoderEtat(capacites, demande)}`;
+    window.history.replaceState(null, "", url);
+    try {
+      await navigator.clipboard.writeText(url);
+      setPartage("copie");
+    } catch {
+      // Presse-papier refusé : l'URL de la barre d'adresse fait le relais.
+      setPartage("adresse");
+    }
+    setTimeout(() => setPartage(null), 3000);
+  };
 
   const resultat = simuler(capacites, demande);
   const couverture = resultat.totalTwh / resultat.besoinTwh;
@@ -407,6 +433,27 @@ export function Simulator() {
                 : "Le socle pilotable limite les besoins de stockage et de centrales d'appoint : les flexibilités restent dans le prolongement de l'existant."}
             </p>
           </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-5 w-full"
+            onPress={partager}
+          >
+            {partage === "copie" ? (
+              <>
+                <Check data-icon="inline-start" /> Lien copié
+              </>
+            ) : partage === "adresse" ? (
+              <>
+                <Check data-icon="inline-start" /> Lien dans la barre d&apos;adresse
+              </>
+            ) : (
+              <>
+                <Link2 data-icon="inline-start" /> Partager ce mix
+              </>
+            )}
+          </Button>
 
           <p className="mt-5 border-t pt-4 text-xs text-pretty text-muted-foreground">
             Rythmes calculés sur {ANNEES_RESTANTES} ans (2026-2050). Chiffres

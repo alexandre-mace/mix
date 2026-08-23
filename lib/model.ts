@@ -397,3 +397,32 @@ export function rythmeRequis(filiere: Filiere, capacite: number): Rythme | null 
   }
   return { gwParAn, statut: "historique" };
 }
+
+/**
+ * Encodage de l'état dans l'URL, pour partager un mix construit.
+ * Format : d=850&c=40,25,110,55,35,22,1.3 (ordre de FILIERES).
+ */
+export function encoderEtat(capacites: Capacites, demandeTwh: number): string {
+  // Construit à la main : URLSearchParams encoderait les virgules en %2C et
+  // rendrait le lien partagé illisible, alors que les valeurs sont des nombres.
+  const c = FILIERES.map((f) => capacites[f.id]).join(",");
+  return `d=${demandeTwh}&c=${c}`;
+}
+
+export function decoderEtat(
+  query: string
+): { capacites: Capacites; demande: number } | null {
+  const params = new URLSearchParams(query);
+  const d = Number(params.get("d"));
+  const c = params.get("c")?.split(",").map(Number);
+  if (!d || !c || c.length !== FILIERES.length || c.some((v) => !isFinite(v))) {
+    return null;
+  }
+  const capacites = Object.fromEntries(
+    FILIERES.map((f, i) => [f.id, Math.min(Math.max(c[i], f.min), f.max)])
+  ) as Capacites;
+  return {
+    capacites,
+    demande: Math.min(Math.max(d, DEMANDE.min), DEMANDE.max),
+  };
+}
