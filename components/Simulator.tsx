@@ -128,11 +128,11 @@ function FiliereCard({
           )}
           <Slider
             aria-label={`Capacité ${filiere.nom}`}
-            minValue={filiere.min}
-            maxValue={filiere.max}
+            min={filiere.min}
+            max={filiere.max}
             step={1}
             value={capacite}
-            onChange={(valeur) => onChange(valeur as number)}
+            onValueChange={(valeur) => onChange(valeur as number)}
           />
         </div>
       )}
@@ -235,9 +235,9 @@ export function Simulator() {
                 key={preset.id}
                 variant="outline"
                 size="sm"
-                data-selected={demande === preset.valeur || undefined}
-                className="data-selected:border-primary data-selected:bg-primary/5 data-selected:text-primary"
-                onPress={() => {
+                aria-pressed={demande === preset.valeur}
+                className="aria-pressed:border-primary aria-pressed:bg-primary/5 aria-pressed:text-primary"
+                onClick={() => {
                   setDemande(preset.valeur);
                   setScenarioActif(null);
                 }}
@@ -249,11 +249,11 @@ export function Simulator() {
           <div className="mt-4">
             <Slider
               aria-label="Demande d'électricité en 2050"
-              minValue={DEMANDE.min}
-              maxValue={DEMANDE.max}
+              min={DEMANDE.min}
+              max={DEMANDE.max}
               step={10}
               value={demande}
-              onChange={(valeur) => {
+              onValueChange={(valeur) => {
                 setDemande(valeur as number);
                 setScenarioActif(null);
               }}
@@ -283,9 +283,9 @@ export function Simulator() {
                 key={s.id}
                 variant="outline"
                 size="sm"
-                data-selected={scenarioActif === s.id || undefined}
-                className="data-selected:border-primary data-selected:bg-primary/5 data-selected:text-primary"
-                onPress={() => chargerScenario(s.id)}
+                aria-pressed={scenarioActif === s.id}
+                className="aria-pressed:border-primary aria-pressed:bg-primary/5 aria-pressed:text-primary"
+                onClick={() => chargerScenario(s.id)}
               >
                 {s.nom}
               </Button>
@@ -458,7 +458,7 @@ export function Simulator() {
             variant="outline"
             size="sm"
             className="mt-5 w-full"
-            onPress={partager}
+            onClick={partager}
           >
             {partage === "copie" ? (
               <>
